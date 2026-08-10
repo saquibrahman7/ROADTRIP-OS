@@ -1,3 +1,7 @@
+// ==================================================
+// SUPABASE
+// ==================================================
+
 const SUPABASE_URL =
   "https://erjuaqrbcmnxdvasolfn.supabase.co";
 
@@ -10,62 +14,97 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
+
+// ==================================================
+// CURRENT TRIP
+// ==================================================
+
 let currentTrip = null;
 
 
-// ===============================
+// ==================================================
 // CREATE TRIP
-// ===============================
+// ==================================================
 
 async function createTrip() {
 
-  const tripName = prompt("Trip name:");
+  const tripName =
+    prompt("Trip name:");
+
   if (!tripName) return;
 
-  const destination = prompt("Destination:");
+
+  const destination =
+    prompt("Destination:");
+
   if (!destination) return;
 
-  const joinCode = Math.random()
-    .toString(36)
-    .substring(2, 8)
-    .toUpperCase();
+
+  const joinCode =
+    Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+
 
   const { data, error } =
     await supabaseClient
       .from("trips")
-      .insert([{
-        name: tripName,
-        destination: destination,
-        join_code: joinCode
-      }])
+      .insert([
+        {
+          name: tripName,
+          destination: destination,
+          join_code: joinCode
+        }
+      ])
       .select()
       .single();
 
+
   if (error) {
+
     console.error(error);
-    alert("Could not create trip.");
+
+    alert(
+      "Could not create trip:\n\n" +
+      error.message
+    );
+
     return;
   }
 
+
   currentTrip = data;
 
-  const success =
-    await addMember("Trip Creator");
 
-  if (!success) return;
+  const memberAdded =
+    await addMember(
+      "Trip Creator"
+    );
+
+
+  if (!memberAdded) return;
+
 
   showDashboard();
+
 }
 
 
-// ===============================
+// ==================================================
 // JOIN TRIP
-// ===============================
+// ==================================================
 
 async function joinTrip() {
 
-  const code = prompt("Enter trip code:");
+  const code =
+    prompt(
+      "Enter trip code:"
+    );
+
+
   if (!code) return;
+
 
   const { data, error } =
     await supabaseClient
@@ -77,78 +116,127 @@ async function joinTrip() {
       )
       .single();
 
+
   if (error || !data) {
-    alert("Trip not found.");
+
+    alert(
+      "Trip not found."
+    );
+
     return;
   }
 
-  const name = prompt("Your name:");
+
+  const name =
+    prompt(
+      "Your name:"
+    );
+
+
   if (!name) return;
+
 
   currentTrip = data;
 
-  const success =
-    await addMember(name.trim());
 
-  if (!success) return;
+  const memberAdded =
+    await addMember(
+      name.trim()
+    );
+
+
+  if (!memberAdded) return;
+
 
   showDashboard();
+
 }
 
 
-// ===============================
+// ==================================================
 // ADD MEMBER
-// ===============================
+// ==================================================
 
 async function addMember(name) {
 
   const { error } =
     await supabaseClient
       .from("trip_members")
-      .insert([{
-        trip_id: currentTrip.id,
-        name: name
-      }]);
+      .insert([
+        {
+          trip_id:
+            currentTrip.id,
+
+          name:
+            name
+        }
+      ]);
+
 
   if (error) {
+
     console.error(error);
-    alert("Could not add member.");
+
+    alert(
+      "Could not add member:\n\n" +
+      error.message
+    );
+
     return false;
   }
 
+
   return true;
+
 }
 
 
-// ===============================
+// ==================================================
 // SHOW DASHBOARD
-// ===============================
+// ==================================================
 
 function showDashboard() {
 
-  document.getElementById("home")
-    .style.display = "none";
+  document.getElementById(
+    "home"
+  ).style.display =
+    "none";
 
-  document.getElementById("dashboard")
-    .style.display = "block";
 
-  document.getElementById("tripTitle")
-    .textContent = currentTrip.name;
+  document.getElementById(
+    "dashboard"
+  ).style.display =
+    "block";
 
-  document.getElementById("tripDestination")
-    .textContent = currentTrip.destination;
 
-  document.getElementById("tripCode")
-    .textContent = currentTrip.join_code;
+  document.getElementById(
+    "tripTitle"
+  ).textContent =
+    currentTrip.name;
+
+
+  document.getElementById(
+    "tripDestination"
+  ).textContent =
+    currentTrip.destination;
+
+
+  document.getElementById(
+    "tripCode"
+  ).textContent =
+    currentTrip.join_code;
+
 
   loadMembers();
+
   loadExpenses();
+
 }
 
 
-// ===============================
+// ==================================================
 // LOAD MEMBERS
-// ===============================
+// ==================================================
 
 async function loadMembers() {
 
@@ -160,61 +248,102 @@ async function loadMembers() {
         "trip_id",
         currentTrip.id
       )
-      .order("created_at");
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
 
   if (error) {
+
     console.error(error);
+
     return;
   }
 
+
   const list =
-    document.getElementById("membersList");
+    document.getElementById(
+      "membersList"
+    );
+
 
   list.innerHTML = "";
 
+
   if (!data || data.length === 0) {
-    list.innerHTML = "<p>No members.</p>";
+
+    list.innerHTML =
+      "<p>No members yet.</p>";
+
     return;
   }
 
-  data.forEach(member => {
 
-    const div =
-      document.createElement("div");
+  data.forEach(
+    (member, index) => {
 
-    div.className = "member";
+      const div =
+        document.createElement(
+          "div"
+        );
 
-    div.textContent =
-      "🚗 " + member.name;
 
-    list.appendChild(div);
-  });
+      div.className =
+        "member";
+
+
+      div.textContent =
+        "🚗 " +
+        member.name;
+
+
+      list.appendChild(
+        div
+      );
+
+    }
+  );
+
 }
 
 
-// ===============================
+// ==================================================
 // ADD EXPENSE
-// ===============================
+// ==================================================
 
 async function addExpense() {
 
   const title =
     prompt(
-      "Expense name:\n\nExample: Diesel, Food, Toll"
+      "Expense name:\n\n" +
+      "Example:\n" +
+      "Diesel\n" +
+      "Food\n" +
+      "Toll\n" +
+      "Hotel"
     );
+
 
   if (!title) return;
 
 
   const amountText =
-    prompt("Amount ₹:");
+    prompt(
+      "Amount ₹:"
+    );
+
 
   if (!amountText) return;
 
 
   const amount =
     parseFloat(
-      amountText.replace(/,/g, "")
+      amountText
+        .replace(/,/g, "")
+        .trim()
     );
 
 
@@ -223,7 +352,9 @@ async function addExpense() {
     amount <= 0
   ) {
 
-    alert("Enter a valid amount.");
+    alert(
+      "Enter a valid amount."
+    );
 
     return;
   }
@@ -231,7 +362,10 @@ async function addExpense() {
 
   // GET MEMBERS
 
-  const { data: members, error } =
+  const {
+    data: members,
+    error: memberError
+  } =
     await supabaseClient
       .from("trip_members")
       .select("*")
@@ -239,15 +373,21 @@ async function addExpense() {
         "trip_id",
         currentTrip.id
       )
-      .order("created_at");
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
 
 
-  if (error) {
+  if (memberError) {
 
-    console.error(error);
+    console.error(memberError);
 
     alert(
-      "Could not load members."
+      "Could not load members:\n\n" +
+      memberError.message
     );
 
     return;
@@ -267,9 +407,9 @@ async function addExpense() {
   }
 
 
-  // SHOW MEMBERS
+  // CREATE PAYER MENU
 
-  const memberText =
+  const payerOptions =
     members
       .map(
         (member, index) =>
@@ -278,31 +418,30 @@ async function addExpense() {
       .join("\n");
 
 
-  const payerText =
+  const payerInput =
     prompt(
       "WHO PAID?\n\n" +
-      memberText +
-      "\n\nEnter the NUMBER."
+      payerOptions +
+      "\n\n" +
+      "Enter the NUMBER:"
     );
 
 
-  if (!payerText) return;
+  if (!payerInput) return;
 
 
-  // IMPORTANT:
-  // Convert input to number safely
-
-  const selectedNumber =
-    parseInt(
-      payerText.trim(),
-      10
+  const payerNumber =
+    Number(
+      payerInput.trim()
     );
 
 
   if (
-    isNaN(selectedNumber) ||
-    selectedNumber < 1 ||
-    selectedNumber > members.length
+    !Number.isInteger(
+      payerNumber
+    ) ||
+    payerNumber < 1 ||
+    payerNumber > members.length
   ) {
 
     alert(
@@ -317,29 +456,42 @@ async function addExpense() {
 
   const payer =
     members[
-      selectedNumber - 1
+      payerNumber - 1
     ];
 
 
   // SAVE EXPENSE
 
-  const { error: expenseError } =
+  const {
+    error: expenseError
+  } =
     await supabaseClient
       .from("expenses")
-      .insert([{
-        trip_id: currentTrip.id,
-        member_id: payer.id,
-        title: title.trim(),
-        amount: amount
-      }]);
+      .insert([
+        {
+          trip_id:
+            currentTrip.id,
+
+          member_id:
+            payer.id,
+
+          title:
+            title.trim(),
+
+          amount:
+            amount
+        }
+      ]);
 
 
   if (expenseError) {
 
-    console.error(expenseError);
+    console.error(
+      expenseError
+    );
 
     alert(
-      "Could not save expense.\n\n" +
+      "Could not save expense:\n\n" +
       expenseError.message
     );
 
@@ -347,27 +499,21 @@ async function addExpense() {
   }
 
 
-  alert(
-    "Expense added!\n\n" +
-    title +
-    "\n₹" +
-    amount.toFixed(2) +
-    "\nPaid by: " +
-    payer.name
-  );
-
-
   loadExpenses();
+
 }
 
 
-// ===============================
+// ==================================================
 // LOAD EXPENSES
-// ===============================
+// ==================================================
 
 async function loadExpenses() {
 
-  const { data: expenses, error } =
+  const {
+    data: expenses,
+    error
+  } =
     await supabaseClient
       .from("expenses")
       .select(`
@@ -380,7 +526,9 @@ async function loadExpenses() {
       )
       .order(
         "created_at",
-        { ascending: false }
+        {
+          ascending: false
+        }
       );
 
 
@@ -392,7 +540,11 @@ async function loadExpenses() {
   }
 
 
-  const { data: members } =
+  // GET MEMBERS
+
+  const {
+    data: members
+  } =
     await supabaseClient
       .from("trip_members")
       .select("*")
@@ -403,22 +555,30 @@ async function loadExpenses() {
 
 
   const total =
-    (expenses || []).reduce(
-      (sum, expense) =>
-        sum + Number(expense.amount),
-      0
-    );
+    (expenses || [])
+      .reduce(
+        (
+          sum,
+          expense
+        ) =>
+          sum +
+          Number(
+            expense.amount
+          ),
+
+        0
+      );
 
 
-  const count =
+  const memberCount =
     members
       ? members.length
       : 0;
 
 
   const perPerson =
-    count > 0
-      ? total / count
+    memberCount > 0
+      ? total / memberCount
       : 0;
 
 
@@ -457,43 +617,88 @@ async function loadExpenses() {
   }
 
 
-  expenses.forEach(expense => {
+  expenses.forEach(
+    expense => {
 
-    const div =
-      document.createElement("div");
-
-    const payer =
-      expense.trip_members
-        ? expense.trip_members.name
-        : "Unknown";
+      const div =
+        document.createElement(
+          "div"
+        );
 
 
-    div.innerHTML =
-      "<strong>" +
-      expense.title +
-      "</strong><br>" +
-      "₹" +
-      Number(expense.amount).toFixed(2) +
-      " — paid by " +
-      payer;
+      const payer =
+        expense.trip_members
+          ? expense.trip_members.name
+          : "Unknown";
 
 
-    list.appendChild(div);
-  });
+      div.className =
+        "expense";
+
+
+      div.innerHTML =
+        "<strong>" +
+        escapeHtml(
+          expense.title
+        ) +
+        "</strong><br>" +
+
+        "₹" +
+        Number(
+          expense.amount
+        ).toFixed(2) +
+
+        " — paid by " +
+
+        escapeHtml(
+          payer
+        );
+
+
+      list.appendChild(
+        div
+      );
+
+    }
+  );
+
 }
 
 
-// ===============================
-// HOME
-// ===============================
+// ==================================================
+// GO HOME
+// ==================================================
 
 function goHome() {
 
   document.getElementById(
     "dashboard"
-  ).style.display = "none";
+  ).style.display =
+    "none";
+
 
   document.getElementById(
     "home"
-  ).style.display = "block";
+  ).style.display =
+    "block";
+
+}
+
+
+// ==================================================
+// SAFETY
+// ==================================================
+
+function escapeHtml(text) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
 }
