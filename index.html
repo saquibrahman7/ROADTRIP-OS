@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>ROADTRIP OS</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,52 +13,125 @@
 
 <header>
   <h1>ROADTRIP OS</h1>
-  <p>Your trip. One dashboard.</p>
+  <p>Plan. Drive. Split. Track.</p>
 </header>
 
 <main>
 
-  <section class="hero">
-    <h2>Plan. Drive. Split. Track.</h2>
-    <p>Everything you need for your road trip.</p>
+  <!-- HOME -->
+  <section id="home">
 
-    <div class="buttons">
-      <button onclick="createTrip()">Create Trip</button>
-      <button onclick="joinTrip()">Join Trip</button>
+    <div class="hero">
+      <h2>Your trip. One dashboard.</h2>
+
+      <div class="buttons">
+        <button onclick="createTrip()">Create Trip</button>
+        <button onclick="joinTrip()">Join Trip</button>
+      </div>
     </div>
+
+    <section class="features">
+
+      <div class="card">
+        <span>💰</span>
+        <h3>Expenses</h3>
+        <p>Split fuel, food, tolls and rooms.</p>
+      </div>
+
+      <div class="card">
+        <span>📍</span>
+        <h3>Live Location</h3>
+        <p>Share your group's live location.</p>
+      </div>
+
+      <div class="card">
+        <span>🧭</span>
+        <h3>Route</h3>
+        <p>Find the best route.</p>
+      </div>
+
+      <div class="card">
+        <span>🚧</span>
+        <h3>Road Alerts</h3>
+        <p>Track tolls and road information.</p>
+      </div>
+
+    </section>
+
   </section>
 
-  <section class="features">
 
-    <div class="card">
-      <span>💰</span>
-      <h3>Expenses</h3>
-      <p>Split fuel, food, tolls and rooms.</p>
+  <!-- TRIP DASHBOARD -->
+  <section id="dashboard" style="display:none">
+
+    <div class="trip-header">
+
+      <button onclick="goHome()">← Home</button>
+
+      <h2 id="tripTitle">Trip</h2>
+
+      <p id="tripDestination"></p>
+
+      <div class="join-box">
+        JOIN CODE:
+        <strong id="tripCode"></strong>
+      </div>
+
     </div>
 
-    <div class="card">
-      <span>📍</span>
-      <h3>Live Location</h3>
-      <p>Share your group's live location.</p>
-    </div>
 
-    <div class="card">
-      <span>🧭</span>
-      <h3>Route</h3>
-      <p>Find the best route to your destination.</p>
-    </div>
+    <div class="dashboard-grid">
 
-    <div class="card">
-      <span>🚧</span>
-      <h3>Road Alerts</h3>
-      <p>Track tolls and road information.</p>
+      <div class="dashboard-card">
+        <span>👥</span>
+        <h3>Members</h3>
+
+        <div id="membersList">
+          Loading...
+        </div>
+
+      </div>
+
+
+      <div class="dashboard-card">
+        <span>💰</span>
+        <h3>Expenses</h3>
+
+        <h2>₹<span id="totalExpenses">0</span></h2>
+
+        <button onclick="addExpense()">
+          + Add Expense
+        </button>
+
+      </div>
+
+
+      <div class="dashboard-card">
+        <span>📍</span>
+        <h3>Live Location</h3>
+
+        <p>Coming next</p>
+
+      </div>
+
+
+      <div class="dashboard-card">
+        <span>🧭</span>
+        <h3>Route</h3>
+
+        <p>Coming next</p>
+
+      </div>
+
     </div>
 
   </section>
 
 </main>
 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="app.js"></script>
 
 </body>
