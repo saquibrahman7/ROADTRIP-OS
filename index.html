@@ -1,6 +1,5 @@
-<!DOCTYPE html>https://saquibrahman7.github.io/ROADTRIP-OS/
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,81 +16,44 @@
   <p>Plan. Drive. Split. Track.</p>
 </header>
 
-
 <main>
 
-  <!-- =========================
-       HOME
-  ========================== -->
-
+  <!-- HOME -->
   <section id="home">
 
     <div class="hero">
-
       <h2>Your trip. One dashboard.</h2>
 
-      <p>
-        Everything you need for your road trip.
-      </p>
-
       <div class="buttons">
-
-        <button onclick="createTrip()">
-          Create Trip
-        </button>
-
-        <button onclick="joinTrip()">
-          Join Trip
-        </button>
-
+        <button onclick="createTrip()">Create Trip</button>
+        <button onclick="joinTrip()">Join Trip</button>
       </div>
-
     </div>
-
 
     <section class="features">
 
       <div class="card">
         <span>💰</span>
-
         <h3>Expenses</h3>
-
-        <p>
-          Split fuel, food, tolls and rooms.
-        </p>
+        <p>Split fuel, food, tolls and rooms.</p>
       </div>
-
 
       <div class="card">
         <span>📍</span>
-
         <h3>Live Location</h3>
-
-        <p>
-          Share your group's live location.
-        </p>
+        <p>Share your group's live location.</p>
       </div>
-
 
       <div class="card">
         <span>🧭</span>
-
         <h3>Route</h3>
-
-        <p>
-          Find the best route.
-        </p>
+        <p>Find the best route.</p>
       </div>
-
 
       <div class="card">
         <span>🚧</span>
-
         <h3>Road Alerts</h3>
-
-        <p>
-          Track tolls and road information.
-        </p>
+        <p>Track tolls and road information.</p>
       </div>
 
     </section>
@@ -99,124 +61,65 @@
   </section>
 
 
-  <!-- =========================
-       TRIP DASHBOARD
-  ========================== -->
-
+  <!-- TRIP DASHBOARD -->
   <section id="dashboard" style="display:none">
-
 
     <div class="trip-header">
 
-      <button onclick="goHome()">
-        ← Home
-      </button>
+      <button onclick="goHome()">← Home</button>
 
-      <h2 id="tripTitle">
-        Trip
-      </h2>
+      <h2 id="tripTitle">Trip</h2>
 
       <p id="tripDestination"></p>
 
-
       <div class="join-box">
-
         JOIN CODE:
-
         <strong id="tripCode"></strong>
-
       </div>
 
     </div>
 
 
-    <!-- DASHBOARD CARDS -->
-
     <div class="dashboard-grid">
 
-
-      <!-- MEMBERS -->
-
       <div class="dashboard-card">
-
         <span>👥</span>
-
-        <h3>
-          Members
-        </h3>
+        <h3>Members</h3>
 
         <div id="membersList">
-
           Loading...
-
         </div>
 
       </div>
 
 
-      <!-- EXPENSES -->
-
       <div class="dashboard-card">
-
         <span>💰</span>
+        <h3>Expenses</h3>
 
-        <h3>
-          Expenses
-        </h3>
-
-
-        <h2>
-          ₹<span id="totalExpenses">0</span>
-        </h2>
-
-
-        <p id="perPerson">
-          ₹0 per person
-        </p>
-
+        <h2>₹<span id="totalExpenses">0</span></h2>
 
         <button onclick="addExpense()">
-
           + Add Expense
-
         </button>
 
-
-        <div id="expenseList"></div>
-
       </div>
 
 
-      <!-- LIVE LOCATION -->
-
       <div class="dashboard-card">
-
         <span>📍</span>
+        <h3>Live Location</h3>
 
-        <h3>
-          Live Location
-        </h3>
-
-        <p>
-          Coming next
-        </p>
+        <p>Coming next</p>
 
       </div>
 
 
-      <!-- ROUTE -->
-
       <div class="dashboard-card">
-
         <span>🧭</span>
+        <h3>Route</h3>
 
-        <h3>
-          Route
-        </h3>
-
-        <p>
-          Coming next
-        </p>
+        <p>Coming next</p>
 
       </div>
 
@@ -227,15 +130,9 @@
 </main>
 
 
-<!-- SUPABASE -->
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-<!-- OUR APP -->
 
 <script src="app.js"></script>
 
 </body>
-
 </html>
