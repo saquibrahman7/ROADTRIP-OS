@@ -6,6 +6,10 @@ const supabaseClient = supabase.createClient(
   SUPABASE_KEY
 );
 
+let currentTrip = null;
+
+
+// CREATE TRIP
 async function createTrip() {
 
   const tripName = prompt("Trip name:");
@@ -37,17 +41,20 @@ async function createTrip() {
     return;
   }
 
-  alert(
-    `TRIP CREATED!\n\n` +
-    `Trip: ${data.name}\n` +
-    `Destination: ${data.destination}\n\n` +
-    `JOIN CODE: ${data.join_code}`
-  );
+  currentTrip = data;
+
+  showDashboard();
+
+  await addMember("Trip Creator");
+
 }
 
+
+// JOIN TRIP
 async function joinTrip() {
 
   const code = prompt("Enter trip code:");
+
   if (!code) return;
 
   const { data, error } = await supabaseClient
@@ -57,31 +64,122 @@ async function joinTrip() {
     .single();
 
   if (error || !data) {
+
     alert("Trip not found.");
+
     return;
   }
 
   const name = prompt("Your name:");
+
   if (!name) return;
 
-  const { error: memberError } = await supabaseClient
+  currentTrip = data;
+
+  await addMember(name);
+
+  showDashboard();
+
+}
+
+
+// ADD MEMBER
+async function addMember(name) {
+
+  const { error } = await supabaseClient
     .from("trip_members")
     .insert([
       {
-        trip_id: data.id,
+        trip_id: currentTrip.id,
         name: name
       }
     ]);
 
-  if (memberError) {
-    console.error(memberError);
-    alert("Could not join trip.");
+  if (error) {
+
+    console.error(error);
+
+    alert("Could not add member.");
+
     return;
   }
 
-  alert(
-    `JOINED!\n\n` +
-    `${data.name}\n` +
-    `${data.destination}`
-  );
+  loadMembers();
+}
+
+
+// SHOW DASHBOARD
+function showDashboard() {
+
+  document.getElementById("home").style.display = "none";
+
+  document.getElementById("dashboard").style.display = "block";
+
+  document.getElementById("tripTitle").textContent =
+    currentTrip.name;
+
+  document.getElementById("tripDestination").textContent =
+    currentTrip.destination;
+
+  document.getElementById("tripCode").textContent =
+    currentTrip.join_code;
+
+  loadMembers();
+}
+
+
+// LOAD MEMBERS
+async function loadMembers() {
+
+  const { data, error } = await supabaseClient
+
+    .from("trip_members")
+
+    .select("*")
+
+    .eq("trip_id", currentTrip.id)
+
+    .order("created_at");
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+  }
+
+  const list = document.getElementById("membersList");
+
+  list.innerHTML = "";
+
+  data.forEach(member => {
+
+    const div = document.createElement("div");
+
+    div.className = "member";
+
+    div.textContent = "🚗 " + member.name;
+
+    list.appendChild(div);
+
+  });
+
+}
+
+
+// GO HOME
+function goHome() {
+
+  document.getElementById("dashboard").style.display = "none";
+
+  document.getElementById("home").style.display = "block";
+
+}
+
+
+// TEMPORARY EXPENSE BUTTON
+function addExpense() {
+
+  alert("Expense manager coming next.");
+
 }
