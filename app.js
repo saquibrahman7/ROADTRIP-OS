@@ -128,6 +128,7 @@ function showDashboard() {
     currentTrip.join_code;
 
   loadMembers();
+  loadExpenses();
 }
 
 
@@ -182,8 +183,138 @@ function goHome() {
 // EXPENSES
 // =========================
 
-function addExpense() {
+async function addExpense() {
 
-  alert("Expense manager coming next.");
+  const title = prompt(
+    "Expense:\nExample: Diesel, Food, Toll, Hotel"
+  );
 
+  if (!title) return;
+
+  const amountInput = prompt("Amount ₹:");
+
+  if (!amountInput) return;
+
+  const amount = Number(amountInput);
+
+  if (isNaN(amount) || amount <= 0) {
+    alert("Enter a valid amount.");
+    return;
+  }
+
+  const { data: members, error: memberError } =
+    await supabaseClient
+      .from("trip_members")
+      .select("*")
+      .eq("trip_id", currentTrip.id)
+      .order("created_at");
+
+  if (memberError || !members.length) {
+    alert("No trip members found.");
+    return;
+  }
+
+  const payer = prompt(
+    "Who paid?\n\n" +
+    members
+      .map((m, i) => `${i + 1}. ${m.name}`)
+      .join("\n")
+  );
+
+  const payerIndex = Number(payer) - 1;
+
+  if (
+    isNaN(payerIndex) ||
+    payerIndex < 0 ||
+    payerIndex >= members.length
+  ) {
+    alert("Invalid payer.");
+    return;
+  }
+
+  const payerMember = members[payerIndex];
+
+  const { error } = await supabaseClient
+    .from("expenses")
+    .insert([
+      {
+        trip_id: currentTrip.id,
+        member_id: payerMember.id,
+        title: title,
+        amount: amount
+      }
+    ]);
+
+  if (error) {
+    console.error(error);
+    alert("Could not save expense.");
+    return;
+  }
+
+  loadExpenses();
+}
+
+
+async function loadExpenses() {
+
+  const { data: expenses, error } =
+    await supabaseClient
+      .from("expenses")
+      .select(`
+        *,
+        trip_members(name)
+      `)
+      .eq("trip_id", currentTrip.id)
+      .order("created_at", {
+        ascending: false
+      });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const total = expenses.reduce(
+    (sum, expense) => sum + Number(expense.amount),
+    0
+  );
+
+  const { data: members } =
+    await supabaseClient
+      .from("trip_members")
+      .select("*")
+      .eq("trip_id", currentTrip.id);
+
+  const perPerson =
+    members.length > 0
+      ? total / members.length
+      : 0;
+
+  document.getElementById("totalExpenses").textContent =
+    total.toFixed(2);
+
+  document.getElementById("perPerson").textContent =
+    `₹${perPerson.toFixed(2)} per person`;
+
+  const list =
+    document.getElementById("expenseList");
+
+  list.innerHTML = "";
+
+  expenses.forEach(expense => {
+
+    const div = document.createElement("div");
+
+    div.className = "expense";
+
+    div.innerHTML = `
+      <strong>${expense.title}</strong>
+      <br>
+      ₹${Number(expense.amount).toFixed(2)}
+      — paid by ${expense.trip_members.name}
+    `;
+
+    list.appendChild(div);
+
+  });
 }
