@@ -1,1 +1,114 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
+body {
+  font-family: Arial, sans-serif;
+  background: #0b0b0b;
+  color: white;
+  min-height: 100vh;
+}
+
+header {
+  padding: 25px;
+  text-align: center;
+  border-bottom: 1px solid #222;
+}
+
+header h1 {
+  font-size: 28px;
+  letter-spacing: 2px;
+}
+
+header p {
+  color: #888;
+  margin-top: 6px;
+}
+
+main {
+  max-width: 1000px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+.hero {
+  text-align: center;
+  padding: 70px 20px;
+}
+
+.hero h2 {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  color: #999;
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+button {
+  border: none;
+  padding: 14px 25px;
+  border-radius: 10px;
+  background: white;
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.card {
+  background: #151515;
+  border: 1px solid #252525;
+  border-radius: 16px;
+  padding: 25px;
+}
+
+.card span {
+  font-size: 30px;
+}
+
+.card h3 {
+  margin-top: 15px;
+  margin-bottom: 8px;
+}
+
+.card p {
+  color: #888;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+
+  .hero h2 {
+    font-size: 32px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+}
