@@ -1,4 +1,4 @@
-const SUPABASE_URL = "https://github.com/saquibrahman7/ROADTRIP-OS/blob/main/app.js";
+const SUPABASE_URL = "https://erjuaqrbcmnxdvasolfn.supabase.co/rest/v1/";
 const SUPABASE_KEY = "sb_publishable_MpwUByDTMw7W9Vuk0F2yyw_f-fr0_f2";
 
 const supabaseClient = supabase.createClient(
