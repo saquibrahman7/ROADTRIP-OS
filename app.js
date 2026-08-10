@@ -414,23 +414,33 @@ async function addExpense() {
 
   // Choose payer
 
-  const payerChoice =
-    prompt(
-      "Who paid?\n\n" +
+ const payerChoice = prompt(
+  "Who paid?\n\n" +
+  members
+    .map(
+      (member, index) =>
+        `${index + 1}. ${member.name}`
+    )
+    .join("\n") +
+  "\n\nEnter the NUMBER:"
+);
 
-      members
-        .map(
-          (member, index) =>
-            `${index + 1}. ${member.name}`
-        )
-        .join("\n")
-    );
+if (!payerChoice) return;
 
+const payerIndex = parseInt(payerChoice.trim(), 10) - 1;
 
-  const payerIndex =
-    Number(
-      payerChoice
-    ) - 1;
+if (
+  isNaN(payerIndex) ||
+  payerIndex < 0 ||
+  payerIndex >= members.length
+) {
+  alert(
+    "Invalid payer.\n\nPlease enter a number like 1 or 2."
+  );
+  return;
+}
+
+const payer = members[payerIndex];
 
 
   if (
