@@ -1,4 +1,6 @@
 const SUPABASE_URL = "https://erjuaqrbcmnxdvasolfn.supabase.co";
+
+// KEEP YOUR CURRENT WORKING KEY HERE
 const SUPABASE_KEY = "sb_publishable_MpwUByDTMw7W9Vuk0F2yyw_f-fr0_f2";
 
 const supabaseClient = supabase.createClient(
@@ -9,7 +11,10 @@ const supabaseClient = supabase.createClient(
 let currentTrip = null;
 
 
+// =========================
 // CREATE TRIP
+// =========================
+
 async function createTrip() {
 
   const tripName = prompt("Trip name:");
@@ -43,14 +48,16 @@ async function createTrip() {
 
   currentTrip = data;
 
-  showDashboard();
-
   await addMember("Trip Creator");
 
+  showDashboard();
 }
 
 
+// =========================
 // JOIN TRIP
+// =========================
+
 async function joinTrip() {
 
   const code = prompt("Enter trip code:");
@@ -64,9 +71,7 @@ async function joinTrip() {
     .single();
 
   if (error || !data) {
-
     alert("Trip not found.");
-
     return;
   }
 
@@ -79,11 +84,13 @@ async function joinTrip() {
   await addMember(name);
 
   showDashboard();
-
 }
 
 
+// =========================
 // ADD MEMBER
+// =========================
+
 async function addMember(name) {
 
   const { error } = await supabaseClient
@@ -96,19 +103,17 @@ async function addMember(name) {
     ]);
 
   if (error) {
-
     console.error(error);
-
     alert("Could not add member.");
-
     return;
   }
-
-  loadMembers();
 }
 
 
+// =========================
 // SHOW DASHBOARD
+// =========================
+
 function showDashboard() {
 
   document.getElementById("home").style.display = "none";
@@ -128,23 +133,20 @@ function showDashboard() {
 }
 
 
+// =========================
 // LOAD MEMBERS
+// =========================
+
 async function loadMembers() {
 
   const { data, error } = await supabaseClient
-
     .from("trip_members")
-
     .select("*")
-
     .eq("trip_id", currentTrip.id)
-
     .order("created_at");
 
   if (error) {
-
     console.error(error);
-
     return;
   }
 
@@ -163,21 +165,25 @@ async function loadMembers() {
     list.appendChild(div);
 
   });
-
 }
 
 
-// GO HOME
+// =========================
+// HOME
+// =========================
+
 function goHome() {
 
   document.getElementById("dashboard").style.display = "none";
 
   document.getElementById("home").style.display = "block";
-
 }
 
 
-// TEMPORARY EXPENSE BUTTON
+// =========================
+// EXPENSES
+// =========================
+
 function addExpense() {
 
   alert("Expense manager coming next.");
