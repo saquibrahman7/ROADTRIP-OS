@@ -1,191 +1,361 @@
-const SUPABASE_URL = "https://erjuaqrbcmnxdvasolfn.supabase.co";
+// ==================================================
+// SUPABASE
+// ==================================================
 
-// KEEP YOUR CURRENT WORKING KEY HERE
-const SUPABASE_KEY = "sb_publishable_MpwUByDTMw7W9Vuk0F2yyw_f-fr0_f2";
+const SUPABASE_URL =
+  "https://erjuaqrbcmnxdvasolfn.supabase.co";
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const SUPABASE_KEY =
+  "sb_publishable_MpwUByDTMw7W9Vuk0F2yyw_f-fr0_f2";
+
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
 
 let currentTrip = null;
 
 
-// =========================
+// ==================================================
 // CREATE TRIP
-// =========================
+// ==================================================
 
 async function createTrip() {
 
-  const tripName = prompt("Trip name:");
-  if (!tripName) return;
+  const tripName =
+    prompt("Trip name:");
 
-  const destination = prompt("Destination:");
-  if (!destination) return;
-
-  const joinCode = Math.random()
-    .toString(36)
-    .substring(2, 8)
-    .toUpperCase();
-
-  const { data, error } = await supabaseClient
-    .from("trips")
-    .insert([
-      {
-        name: tripName,
-        destination: destination,
-        join_code: joinCode
-      }
-    ])
-    .select()
-    .single();
-
-  if (error) {
-    console.error(error);
-    alert("Could not create trip.");
+  if (!tripName) {
     return;
   }
+
+
+  const destination =
+    prompt("Destination:");
+
+  if (!destination) {
+    return;
+  }
+
+
+  const joinCode =
+    Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+
+
+  const { data, error } =
+    await supabaseClient
+      .from("trips")
+      .insert([
+        {
+          name: tripName.trim(),
+          destination: destination.trim(),
+          join_code: joinCode
+        }
+      ])
+      .select()
+      .single();
+
+
+  if (error) {
+
+    console.error("CREATE TRIP ERROR:", error);
+
+    alert(
+      "Could not create trip.\n\n" +
+      error.message
+    );
+
+    return;
+  }
+
 
   currentTrip = data;
 
-  await addMember("Trip Creator");
+
+  // Add creator
+
+  const { error: memberError } =
+    await supabaseClient
+      .from("trip_members")
+      .insert([
+        {
+          trip_id: currentTrip.id,
+          name: "Trip Creator"
+        }
+      ]);
+
+
+  if (memberError) {
+
+    console.error(
+      "MEMBER ERROR:",
+      memberError
+    );
+
+    alert(
+      "Trip created, but creator could not be added.\n\n" +
+      memberError.message
+    );
+
+    return;
+  }
+
+
+  // SHOW DASHBOARD
 
   showDashboard();
+
 }
 
 
-// =========================
+// ==================================================
 // JOIN TRIP
-// =========================
+// ==================================================
 
 async function joinTrip() {
 
-  const code = prompt("Enter trip code:");
+  const code =
+    prompt(
+      "Enter trip code:"
+    );
 
-  if (!code) return;
 
-  const { data, error } = await supabaseClient
-    .from("trips")
-    .select("*")
-    .eq("join_code", code.toUpperCase())
-    .single();
+  if (!code) {
+    return;
+  }
+
+
+  const cleanCode =
+    code.trim().toUpperCase();
+
+
+  const { data, error } =
+    await supabaseClient
+      .from("trips")
+      .select("*")
+      .eq(
+        "join_code",
+        cleanCode
+      )
+      .single();
+
 
   if (error || !data) {
-    alert("Trip not found.");
+
+    console.error(
+      "JOIN ERROR:",
+      error
+    );
+
+    alert(
+      "Trip not found."
+    );
+
     return;
   }
 
-  const name = prompt("Your name:");
 
-  if (!name) return;
-
- currentTrip = data;
-
-alert(
-  "TRIP CREATED!\n\nJOIN CODE: " +
-  currentTrip.join_code
-);
+  const name =
+    prompt(
+      "Your name:"
+    );
 
 
-// =========================
-// ADD MEMBER
-// =========================
-
-async function addMember(name) {
-
-  const { error } = await supabaseClient
-    .from("trip_members")
-    .insert([
-      {
-        trip_id: currentTrip.id,
-        name: name
-      }
-    ]);
-
-  if (error) {
-    console.error(error);
-    alert("Could not add member.");
+  if (!name) {
     return;
   }
+
+
+  currentTrip = data;
+
+
+  const { error: memberError } =
+    await supabaseClient
+      .from("trip_members")
+      .insert([
+        {
+          trip_id: currentTrip.id,
+          name: name.trim()
+        }
+      ]);
+
+
+  if (memberError) {
+
+    console.error(
+      "MEMBER ERROR:",
+      memberError
+    );
+
+    alert(
+      "Could not join trip.\n\n" +
+      memberError.message
+    );
+
+    return;
+  }
+
+
+  showDashboard();
+
 }
 
 
-// =========================
+// ==================================================
 // SHOW DASHBOARD
-// =========================
+// ==================================================
 
 function showDashboard() {
 
-  document.getElementById("home").style.display = "none";
+  document.getElementById(
+    "home"
+  ).style.display = "none";
 
-  document.getElementById("dashboard").style.display = "block";
 
-  document.getElementById("tripTitle").textContent =
+  document.getElementById(
+    "dashboard"
+  ).style.display = "block";
+
+
+  // Trip name
+
+  document.getElementById(
+    "tripTitle"
+  ).textContent =
     currentTrip.name;
 
-  document.getElementById("tripDestination").textContent =
+
+  // Destination
+
+  document.getElementById(
+    "tripDestination"
+  ).textContent =
     currentTrip.destination;
 
-  document.getElementById("tripCode").textContent =
+
+  // JOIN CODE
+
+  document.getElementById(
+    "tripCode"
+  ).textContent =
     currentTrip.join_code;
 
+
+  // Members
+
   loadMembers();
+
 }
 
 
-// =========================
+// ==================================================
 // LOAD MEMBERS
-// =========================
+// ==================================================
 
 async function loadMembers() {
 
-  const { data, error } = await supabaseClient
-    .from("trip_members")
-    .select("*")
-    .eq("trip_id", currentTrip.id)
-    .order("created_at");
-
-  if (error) {
-    console.error(error);
+  if (!currentTrip) {
     return;
   }
 
-  const list = document.getElementById("membersList");
+
+  const { data, error } =
+    await supabaseClient
+      .from("trip_members")
+      .select("*")
+      .eq(
+        "trip_id",
+        currentTrip.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(
+      "LOAD MEMBERS ERROR:",
+      error
+    );
+
+    return;
+  }
+
+
+  const list =
+    document.getElementById(
+      "membersList"
+    );
+
 
   list.innerHTML = "";
 
-  data.forEach(member => {
 
-    const div = document.createElement("div");
+  if (
+    !data ||
+    data.length === 0
+  ) {
 
-    div.className = "member";
+    list.innerHTML =
+      "<p>No members yet.</p>";
 
-    div.textContent = "🚗 " + member.name;
+    return;
+  }
 
-    list.appendChild(div);
 
-  });
+  data.forEach(
+    member => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "member";
+
+
+      div.textContent =
+        "🚗 " +
+        member.name;
+
+
+      list.appendChild(
+        div
+      );
+
+    }
+  );
+
 }
 
 
-// =========================
-// HOME
-// =========================
+// ==================================================
+// GO HOME
+// ==================================================
 
 function goHome() {
 
-  document.getElementById("dashboard").style.display = "none";
+  document.getElementById(
+    "dashboard"
+  ).style.display =
+    "none";
 
-  document.getElementById("home").style.display = "block";
-}
 
-
-// =========================
-// EXPENSES
-// =========================
-
-function addExpense() {
-
-  alert("Expense manager coming next.");
+  document.getElementById(
+    "home"
+  ).style.display =
+    "block";
 
 }
