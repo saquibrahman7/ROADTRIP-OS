@@ -79,12 +79,12 @@ async function joinTrip() {
 
   if (!name) return;
 
-  currentTrip = data;
+ currentTrip = data;
 
-  await addMember(name);
-
-  showDashboard();
-}
+alert(
+  "TRIP CREATED!\n\nJOIN CODE: " +
+  currentTrip.join_code
+);
 
 
 // =========================
