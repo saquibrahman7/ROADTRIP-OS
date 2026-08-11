@@ -19,16 +19,27 @@
 <main>
 
   <!-- HOME -->
+
   <section id="home">
 
     <div class="hero">
+
       <h2>Your trip. One dashboard.</h2>
 
       <div class="buttons">
-        <button onclick="createTrip()">Create Trip</button>
-        <button onclick="joinTrip()">Join Trip</button>
+
+        <button onclick="createTrip()">
+          Create Trip
+        </button>
+
+        <button onclick="joinTrip()">
+          Join Trip
+        </button>
+
       </div>
+
     </div>
+
 
     <section class="features">
 
@@ -62,19 +73,26 @@
 
 
   <!-- TRIP DASHBOARD -->
+
   <section id="dashboard" style="display:none">
 
     <div class="trip-header">
 
-      <button onclick="goHome()">← Home</button>
+      <button onclick="goHome()">
+        ← Home
+      </button>
 
-      <h2 id="tripTitle">Trip</h2>
+      <h2 id="tripTitle">
+        Trip
+      </h2>
 
       <p id="tripDestination"></p>
 
       <div class="join-box">
+
         JOIN CODE:
         <strong id="tripCode"></strong>
+
       </div>
 
     </div>
@@ -82,8 +100,12 @@
 
     <div class="dashboard-grid">
 
+      <!-- MEMBERS -->
+
       <div class="dashboard-card">
+
         <span>👥</span>
+
         <h3>Members</h3>
 
         <div id="membersList">
@@ -93,33 +115,51 @@
       </div>
 
 
+      <!-- EXPENSES -->
+
       <div class="dashboard-card">
+
         <span>💰</span>
+
         <h3>Expenses</h3>
 
-        <h2>₹<span id="totalExpenses">0</span></h2>
+        <h2>
+          ₹<span id="totalExpenses">0</span>
+        </h2>
 
-        <button onclick="addExpense()">
-          + Add Expense
-        </button>
+        <p>
+          Expense manager coming next.
+        </p>
 
       </div>
 
 
+      <!-- LOCATION -->
+
       <div class="dashboard-card">
+
         <span>📍</span>
+
         <h3>Live Location</h3>
 
-        <p>Coming next</p>
+        <p>
+          Coming next
+        </p>
 
       </div>
 
 
+      <!-- ROUTE -->
+
       <div class="dashboard-card">
+
         <span>🧭</span>
+
         <h3>Route</h3>
 
-        <p>Coming next</p>
+        <p>
+          Coming next
+        </p>
 
       </div>
 
